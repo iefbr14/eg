@@ -1,0 +1,35 @@
+#!/usr/bin/perl
+#Script: htmlize.pl
+use CGI qw/:standard :html3 -noDebug/;
+
+# FOR THE PURPOSES OF THE ONLINE PRESENTATION, WE ARE HARD-CODING
+# THE LOCATION OF THE FILE HERE.  COMMENT THE NEXT LINE OUT TO USE
+# THE PROGRAM FROM THE COMMAND LINE.
+$DEMO = 1;
+
+open (STDIN,"./table.txt") if $DEMO;
+print header,start_html('HTMLIZE') if $DEMO;
+
+# get the caption
+chomp($caption = <>);
+
+# get the column headers
+chomp($colhead = <>);
+@col_head = split("\t",$colhead);
+
+# Get the data into an array.  
+# The first item in each array is the header, the rest is
+# the data cells
+while (<>) {
+     chomp;
+     ($rowhead,@data) = split("\t");
+     push(@rows,th($rowhead).td(\@data));
+}
+
+# Print out the table
+print table({-border=>''},
+          caption($caption),
+          TR([th(\@col_head),@rows])
+      );
+
+print end_html if $DEMO;

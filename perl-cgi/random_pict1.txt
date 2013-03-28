@@ -1,0 +1,13 @@
+#!/usr/bin/perl
+# script: random_pict1.pl
+
+use CGI qw/:standard/;
+$DOCUMENT_ROOT = '.';
+$PICTURES = 'pictures';
+chdir "$DOCUMENT_ROOT/$PICTURES"
+   	or die "Couldn't chdir to pictures directory $!";
+
+@pictures = <*.{jpg,gif}>;
+$lucky_one = $pictures[rand(@pictures)];
+die "Failed to pick a picture" unless $lucky_one;
+print redirect("$PICTURES/$lucky_one");

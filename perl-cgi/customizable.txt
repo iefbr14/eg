@@ -1,0 +1,23 @@
+#!/usr/local/bin/perl
+# script: customizable.pl
+
+use CGI;
+
+$q = new CGI;
+$color = $q->param('color') || 'white';
+
+print $q->header,
+    $q->start_html({-bgcolor=>$color},'Customizable Page'),
+    $q->h1('Customizable Page'),
+    "Set this page's background color to:",$q->br,
+    $q->start_form,
+    $q->radio_group(-name=>'color',
+		    -value=>['white','red','green','black',
+			     'blue','silver','cyan'],
+		    -cols=>2),
+    $q->submit(-name=>'Set Background'),
+    $q->end_form,
+    $q->p,
+    $q->a({href=>'../source.html'},'Code examples'),
+    $q->hr,
+    $q->end_html;

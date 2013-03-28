@@ -1,0 +1,9 @@
+#!/usr/bin/perl
+# Script: plaintext2.pl
+use CGI ':standard';
+print header('text/plain');
+print "Jabberwock\n\n";
+print "'Twas brillig, and the slithy toves\n";
+print "Did gyre and gimbol in the wave.\n";
+print "All mimsy were the borogroves,\n";
+print "And the mome raths outgrabe....\n";

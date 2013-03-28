@@ -1,0 +1,12 @@
+
+use strict;
+use Test;
+
+# use a BEGIN block so we print our plan before MyModule is loaded
+BEGIN { chdir 't' if -d 't'; }
+BEGIN { plan tests => 2, todo => [3,4] }
+
+run_data_test_file('../eg/file');
+run_data_test_fd(\*DATA)
+
+__DATA__

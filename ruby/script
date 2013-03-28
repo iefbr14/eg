@@ -1,0 +1,63 @@
+#!/usr/bin/ruby
+
+#head1 NAME
+
+#head1 USAGE
+
+#head1 REQUIRED ARGUMENTS
+
+#head1 OPTION
+
+#head1 DESCRIPTION
+
+#head1 DIAGNOSTICS
+
+#head1 EXIT STATUS
+
+#head1 CONFIGURATION
+
+#head1 DEPENDENCIES
+
+#head1 INCOMPATIBILITIES
+
+#head1 BUGS AND LIMITATIONS
+
+#head1 AUTHOR
+
+#head1 LICENSE COPYRIGHT
+
+#cut
+
+#
+# $Header: $
+#
+
+
+def usage
+	puts <<"EOF";
+Usage: #{$0} [options...] [args]...
+   --
+Options:
+   -x     -- turn Debugging on.
+EOF
+	exit 1
+end
+
+require 'optparse'
+
+$debug = false
+
+OptionParser.new do |o|
+  o.banner = "Usage: #{$0} [options]"
+  o.on('-x', '--[no]-debug', 'Debug on' ) { |b| $debug = true }
+  o.on('-f FILENAME', 'process :' ) { |filename| $filename = filename }
+  o.on('-h', 'Help') { usage o }
+  o.on('-?', 'List Options') { puts o; exit }
+  o.parse!
+end
+
+p :debug => $debug, :filename => $filename
+
+puts "Does nothing.\n" if $debug;
+
+exit

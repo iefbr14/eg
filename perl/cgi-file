@@ -1,0 +1,16 @@
+#!/usr/bin/perl -Tw
+use CGI ':standard';
+use strict;
+
+my $out = start_multipart_form.filefield(-name => 'upload');
+$out .= br.submit('submit','Send').end_form;
+my$file = param('upload');   #the filename returned is also a file handle
+if(request_method eq 'POST' &&
+    defined $file && ref $file && ref $file eq 'Fh')
+{
+    local $/ = undef; #read the whole file
+    $out .= pre <$file>||''; #takes care not to send uninitialized value
+    close $file if $CGI::OS ne 'UNIX'; #such as Win32 platforms
+}
+
+print header,start_html('Sample upload page'),$out,end_html;

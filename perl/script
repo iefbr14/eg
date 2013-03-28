@@ -1,0 +1,53 @@
+#!/usr/bin/perl -w
+
+=head1 NAME
+
+=head1 USAGE
+
+=head1 REQUIRED ARGUMENTS
+
+=head1 OPTION
+
+=head1 DESCRIPTION
+
+=head1 DIAGNOSTICS
+
+=head1 EXIT STATUS
+
+=head1 CONFIGURATION
+
+=head1 DEPENDENCIES
+
+=head1 INCOMPATIBILITIES
+
+=head1 BUGS AND LIMITATIONS
+
+=head1 AUTHOR
+
+=head1 LICENSE COPYRIGHT
+
+=cut
+
+#
+# $Header: $
+#
+
+use strict;
+use warnings;
+use Getopt::Std;
+
+sub usage {
+	die <<"EOF";
+Usage: $0 [options...] [args]...
+   --
+Options:
+   -x     -- turn Debugging on.
+EOF
+}
+
+my(%Opt);
+getopts('x', \%Opt) || usage;
+
+my($Debug) = $Opt{x} || 0;
+
+die "Does nothing.\n" if $Debug;

@@ -1,0 +1,13 @@
+#!/usr/bin/perl
+# script: random_pict2.pl
+
+use CGI qw/:standard/;
+$PICTURE_PATH = path_translated();
+$PICTURE_URL = path_info();
+chdir $PICTURE_PATH
+  	or die "Couldn't chdir to pictures directory: $!";
+@pictures = <*.{jpg,gif}>;
+$lucky_one = $pictures[rand(@pictures)];
+die "Failed to pick a picture" unless $lucky_one;
+
+print redirect("$PICTURE_URL/$lucky_one");

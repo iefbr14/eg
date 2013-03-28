@@ -1,0 +1,4 @@
+#!/bin/sh
+
+growisofs -speed 2 -M /dev/dvd -R -J * ; eject ; ls
+

@@ -1,0 +1,36 @@
+#!/usr/bin/perl
+
+=HEAD NAME
+=HEAD SYNOPIS
+=HEAD DESCRIPTION
+=HEAD AUTHOR
+=HEAD COPYRIGHT
+=HEAD SEE ALSO
+
+$EGDIR = "/u/local/eg";
+
+unless (chdir($EGDIR) {
+	die "Can't cd $EGDIR\n";
+
+	if [ $# -eq 0 ] ; then
+		echo "Sac commands:"
+		echo "--------------------------------------------------------"
+		cd bin 
+		lc -H -d
+		exit 0
+	fi
+	if [ "$1" = "-d" ] ; then
+		shift
+		cmd="$1"; shift
+
+		perl -d "bin/$cmd" "$@"
+
+	elif [ -f "$EGDIR/bin/$1" ] ; then
+		cmd="$1"; shift
+		eval "bin/$cmd" "$@"
+	else
+		echo "Unknown sac command: $1"
+		exit 1
+	fi
+else
+fi

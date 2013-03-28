@@ -1,0 +1,196 @@
+#!/usr/bin/perl
+# guestbook.pl
+
+use CGI qw/:standard :html3 :netscape/;
+use POSIX;
+
+@REQUIRED = qw/name e-mail/;
+@OPTIONAL = qw/location comments/;
+$TIMEOUT = 10;  # allow up to 10 seconds for waiting on a locked guestbook
+$GUESTBOOKFILE = "./guestbookfile.txt";
+%ENTITIES = ('&'=>'&amp;', '>'=>'&gt;', '<'=>'&lt;', '\"'=>'&quot;' );
+
+print header,
+    start_html('Guestbook'),
+    h1("Guestbook");
+
+$_ = param('action');
+
+ CASE: {
+     /^sign/i and do    { sign_guestbook(); last CASE; };
+     /^confirm/i and do { write_guestbook() and view_guestbook(); last CASE; };
+     /^view/i and do    { view_guestbook(); last CASE; };
+     # default
+     generate_form();
+ }
+
+sub sign_guestbook {
+    my @missing = check_missing(param());
+    if (@missing) {
+        print_warning(@missing);
+        generate_form();
+        return undef;
+    }
+    my @rows;
+    foreach (@REQUIRED,@OPTIONAL) {
+        push(@rows,TR(th({-align=>LEFT},$_),td(escapeHTML(param($_)))));
+    }
+    print "Here is your guestbook entry.  Press ",
+          em('Confirm')," to save it, or ",em('Change'),
+          " to change it.",
+          hr,
+          table(@rows),
+          hr;
+
+    print start_form;
+    foreach (@REQUIRED,@OPTIONAL) {
+        print hidden(-name=>$_);
+    }
+    print submit(-name=>'action',
+                 -value=>'Change Entry'),
+          submit(-name=>'action',
+                 -value=>'Confirm Entry'),
+          end_form;
+}
+
+print end_html;
+
+sub check_missing {
+    my (%p);
+    grep (param($_) ne '' && $p{$_}++,@_);
+    return grep(!$p{$_},@REQUIRED);
+}
+
+sub print_warning {
+    print font({-color=>'red'},
+          'Please fill in the following fields: ',
+          em(join(', ',@_)),
+          '.');
+}
+
+sub generate_form {
+    print start_form,
+     table(
+        TR({-align=>LEFT},
+          th('Your name'),
+          td(textfield(-name=>'name',-size=>50))
+        ),
+        TR({-align=>LEFT},
+          th('Your e-mail address'),
+          td(textfield(-name=>'e-mail',-size=>50))
+        ),
+        TR({-align=>LEFT},
+          th('Your location (optional)'),
+          td(textfield(-name=>'location',-size=>50))
+        ),
+        TR({-align=>LEFT},
+          th('Comments (optional)'),
+          td(textarea(-name=>'comments',-rows=>4,
+                      -columns=>50,
+                      -wrap=>1))
+        )
+     ),
+     br,
+     submit(-name=>'action',-value=>'View Guestbook'),
+     submit(-name=>'action',-value=>'Sign Guestbook'),
+     end_form;
+}
+
+sub write_guestbook {
+    my $fh = lock($GUESTBOOKFILE,1);
+    unless ($fh) {
+       print strong('Sorry, an error occurred: unable to open guestbook file.'),p();
+       Delete('action');
+       print a({-href=>self_url},'Try again');
+       return undef;
+    }
+    my $date = strftime('%D',localtime);
+    print $fh join("\t",$date,map {CGI::escape(param($_))} (@REQUIRED,@OPTIONAL)),"\n";
+    print $fh "\n";
+    print "Thank you, ",param('name'),", for signing the guestbook.\n",
+      p(),
+      a({href=>"../source.html"},'Code Examples');
+    unlock($fh);
+    1;
+}
+
+sub view_guestbook {
+
+    print start_form,
+          submit(-name=>'Sign Guestbook'),
+          end_form
+          unless param('name');
+
+    my $fh = lock($GUESTBOOKFILE,0);
+
+    my @rows;
+    unless ($fh) {
+       print strong('Sorry, an error occurred: unable to open guestbook file.'),br;
+       Delete('action');
+       print a({-href=>self_url},'Try again');
+       return undef;
+    }
+    while (<$fh>) {
+       chomp;
+       my @data = map {CGI::unescape($_)} split("\t");
+       foreach (@data) { $_ = escapeHTML($_); }
+       unshift(@rows,td(\@data));
+    }
+    unshift(@rows,th(['Date',@REQUIRED,@OPTIONAL]));
+    print table({-border=>''},
+          caption(strong('Previous Guests')),
+          TR(\@rows));
+    print p,a({href=>"../source.html"},'Code Examples');
+    1;
+}
+
+sub escapeHTML {
+    my $text = shift;
+    $text =~ s/([&\"><])/$ENTITIES{$1}/ge;
+    return $text;
+}
+
+sub LOCK_SH { 1 }
+sub LOCK_EX { 2 }
+sub LOCK_UN { 8 }
+
+sub lock {
+    my $path = shift;
+    my $for_writing = shift;
+
+    my ($lock_type,$path_name,$description);
+    if ($for_writing) {
+        $lock_type = LOCK_EX;
+        $path_name = ">>$path";
+        $description = 'writing';
+    } else {
+        $lock_type = LOCK_SH;
+        $path_name = $path;
+        $description = 'reading';
+    }
+
+    local($msg,$oldsig);
+    my $handler = sub { $msg='timed out'; $SIG{ALRM}=$oldsig; };
+    ($oldsig,$SIG{ALRM}) = ($SIG{ALRM},$handler);
+    alarm($TIMEOUT);
+
+    open (FH,$path_name) or
+       warn("Couldn't open $path for $description: $!"), return undef;
+
+    # now try to lock it
+    unless (flock (FH,$lock_type)) {
+       warn("Couldn't get lock for $description (" . ($msg || "$!") . ")"); 
+       alarm(0);
+       close FH;
+       return undef; 
+    }
+
+    alarm(0);
+    return FH;
+}
+
+sub unlock {
+    my $fh = shift;
+    flock($fh,LOCK_UN);
+    close $fh;
+}

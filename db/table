@@ -1,0 +1,186 @@
+#!/usr/bin/perl -w
+# client -p 3 . "Billing due $R"
+
+use strict;
+use DBI;
+use Getopt::Std;
+
+use Eg::table;
+use Eg::util;
+
+my %Opt;
+
+&getopts('nedD:h', \%Opt) or usage();
+
+sub fields() {
+	print <<"EOF";
+
+client       - unique client name
+prefix       - unique 2 letter prefix for clients invoice file names
+name         - Full client name
+phone        - Phone number of client
+email        - email address.
+address      - postal address (use ';' to seperate address lines)
+EOF
+}
+
+sub usage() {
+	die <<"EOF";
+usage: $0 [options] client
+   used to set/query task in the todo database.
+options:
+    -n      -- interactive create a new client.
+    -e      -- interactive edit of a client.
+
+    -d      -- display details
+    -h      -- display heading
+
+    -D :    -- delete client :
+EOF
+}
+
+my $Detail     = $Opt{d} || 0;
+my $Delete     = $Opt{D} || 0;
+my $Do_Heading = !($Opt{h} || 0);
+
+&new()  if $Opt{n};
+&edit() if $Opt{e};
+
+if ($Delete) {
+	delete_client($Delete);
+	exit 0;
+}
+
+if (@ARGV == 0) {
+	if ($Detail) {
+		display_detail("");
+	} else {
+		display("");
+	}
+	exit 0
+} 
+
+foreach (@ARGV) {
+	if ($_ eq 'Destroy') {
+		&destroy_db();
+		next;
+	}
+
+	if ($_ eq 'Create') {
+		&create_db();
+		next;
+	}
+
+	if ($Detail) {
+		display_detail($_);
+	} else {
+		display($_);
+		$Do_Heading = 0;
+	}
+}
+
+sub display {
+	my($criteria) = @_;
+	my($client, $prefix, $name, $contact, $address, $phone, $email);
+	my(@row);
+
+print <<"EOF";
+Client   Pr Name                       Phone         Email
+======== == ========================== ============  ==========================
+EOF
+format STDOUT =
+@<<<<<<< @< @<<<<<<<<<<<<<<<<<<<<<<<<< @<<<<<<<<<<<<< @<<<<<<<<<<<<<<<<<<<<<<<<
+$client, $prefix, $name,        ,$phone, $email
+.
+
+	my($sth) = Eg::client::list($criteria);
+	while (@row = $sth->fetchrow_array) {
+		($client, $prefix, $name, $contact, $address, $phone, $email)
+			= @row;
+		$address ||= '';
+		$phone ||= '';
+		$email ||= '';
+		write;
+	}
+}
+
+sub display_detail {
+	my($criteria) = @_;
+	my($client, $prefix, $name, $contact, $address, $phone, $email);
+	my(@row);
+
+	my($sth) = Eg::client::list($criteria);
+	while (@row = $sth->fetchrow_array) {
+		($client, $prefix, $name, $contact, $address, $phone, $email)
+			= @row;
+		$name ||= '';
+
+		print "$client:\t$name\n";
+		print "\t\t$email\n" if $email;
+		print "\t\t$phone\n" if $phone;
+		print "\t", join("\n\t", split(';', $address)), "\n" if $address;
+		print "\n";
+	}
+}
+sub set_client {
+	my($task, $desc) = @_;
+#	Eg::client::create(....);
+#	my($t) = $dbh->quote($task);
+#	my($d) = $dbh->quote($desc);
+#
+#	my($rv) = $dbh->do(<<"EOF");
+#	insert into todo (task, description, priority) values($t,$d, $Priority)
+#EOF
+}
+
+sub delete_client {
+	my($client) = @_;
+
+	my($rv) = Eg::client::delete($client);
+	if ($rv == 1) {
+		print "Client $client deleted\n";
+	} else {
+		print "Client $client not found\n";
+	}
+}
+
+sub edit {
+	die "Edit not yet supported.\n";
+}
+
+sub new {
+	my($client, $name, $phone, $email, $address);
+
+	print "Enter client, name, phone, email and address\n";
+	print "  enter ^D to stop, entry not added\n";
+	for (;;) {
+		$client   = &prompt("Client");
+		$name     = &prompt("Name");
+		$phone    = &prompt("Phone");
+		$email    = &prompt("E-mail");
+		$address  = &prompt("Address");
+
+		my($rv) = Eg::client::insert(
+			client  => $client,
+			name    => $name,
+			phone   => $phone,
+			email   => $email,
+			address => $address);
+
+		if ($rv == 1) {
+			print "Client $client added\n\n";
+		} else {
+			print "Client $client not added\n\a\n";
+		}
+	}
+}
+
+sub create_db {
+	Eg::client::create_db();
+	exit 0;
+}
+
+sub destroy_db {
+	Eg::client::destroy_db();
+	exit 0;
+}

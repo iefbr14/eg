@@ -1,0 +1,58 @@
+#!/usr/bin/perl
+# script: nph-quote.pl
+
+use CGI qw/:standard :html3 :nph/;
+$| = 1;
+@STOCKS = qw/IBM Microsoft Intel Apple HP 
+             Adobe Netscape 3Com Adaptec/;
+$INTERVAL = 4; #seconds
+$INCREMENT = 4; #maximum number of points up or down
+initialize_stocks();
+
+print header,
+    start_html('Stock Ticker'),
+    h1('Stock Ticker'),
+    "Quotes when you want them, the way you want them.",p(),
+    table(TR({-align=>LEFT},
+	     th({-width=>100},'Stock'),
+	     th({-width=>50},'Current'),
+	     th({-width=>50},'Change'))
+	  );
+
+while (1) {
+    my($stock,$current,$change) = get_next_quote();
+    print table(TR({-align=>LEFT},
+		   th({-width=>100},$stock),
+		   td({-width=>50},to_eighths($current)),
+		   td({-width=>50,-align=>RIGHT},
+		      to_eighths($change,1)))
+		),"\n";
+    sleep(rand($INTERVAL));
+}
+
+sub initialize_stocks {
+    foreach (@STOCKS) {
+	$CURRENT{$_} = $STARTING{$_} = rand(1000)/10;
+    }
+}
+
+sub get_next_quote {
+   my $stock = $STOCKS[rand(@STOCKS)];
+   my $increment = $INCREMENT - rand(2*$INCREMENT);
+   $CURRENT{$stock} += $increment;
+   $CURRENT{$stock} = 0 if $CURRENT{$stock} < 0;
+   return ($stock,$CURRENT{$stock},
+	   $CURRENT{$stock}-$STARTING{$stock});
+}
+
+sub to_eighths {
+    my($number,$add_sign) = @_;
+    my $sign = ($number>0) ? "+" : 
+	($number<0) ? "-" : ''
+	    if $add_sign;
+    my $quotient = int(abs($number));
+    my $remainder = ((abs($number)-$quotient) * 8) % 8;
+    my $string = "$sign$quotient " . sup("$remainder/8");
+    return font({-color=>red},$string) if $number < 0;
+    return $string;
+}

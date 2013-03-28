@@ -1,0 +1,11 @@
+#!/usr/bin/perl
+#redirect.pl
+
+use CGI qw/:standard/;
+
+print redirect('http://www.wiley.com/compbooks/stein/'),
+    start_html("Moved"),
+    h1("Document Moved"),
+    "The document you have requested has moved ",
+    a({href=>'http://www.wiley.com/compbooks/stein/'},"here"),
+    '.';

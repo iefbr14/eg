@@ -1,0 +1,30 @@
+#!/usr/bin/perl
+use CGI qw/:standard/;
+use CGI::Carp 'fatalsToBrowser';
+# script: gate
+($sec,$min,$hour,$mday,$mon,$year,$wday) = localtime;
+$forbidden = $wday == 0 && 
+             $hour >= 14 && $hour <= 15 &&
+             remote_host()!~/\.oursite\.com$/;
+
+if ($forbidden) {
+   print header(-status=>'403 Forbidden'),
+         start_html('Down for System Maintenance'),
+         h1('Down for System Maintenance'),
+        "The system is down between the hours of 2 and ",
+        "3 PM on Sundays.  Please try back later.",
+   end_html;
+   exit 0;
+}
+ 
+# Generate a relative file name
+$file = "." . path_info();
+$file =~ s/[^a-z0-9\.\/]//ig;
+
+open(FILE,$file) ||
+    die "Couldn't open ",path_info(),": $!\n";
+print header;
+while (<FILE>) {
+    print $_;
+}
+close FILE;

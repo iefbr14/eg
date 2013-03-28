@@ -1,0 +1,6 @@
+#!/usr/bin/perl
+# Script: plaintext.pl
+
+use CGI qw/:standard/;
+print header('text/plain'),
+"Nothing to it!";

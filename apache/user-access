@@ -1,0 +1,20 @@
+#
+# assume: /etc/http/conf/passwd
+#	user1:XXXXXXXXXXXX
+#	user2:XXXXXXXXXXXX
+#
+# assume: /etc/http/conf/group
+#	group1: user1 user2
+#
+
+AuthUserFile  /etc/httpd/conf/passwd
+AuthGroupFile /etc/httpd/conf/group
+
+AuthName "Admin Access"
+AuthType Basic
+
+<Limit POST GET>
+#require user user1
+#require group group1
+#require valid user
+</Limit>

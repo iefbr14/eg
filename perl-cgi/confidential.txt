@@ -1,0 +1,19 @@
+#!/usr/bin/perl
+# script: confidential.pl
+
+use CGI qw/:standard :html3/;
+
+$TRUSTED = 'friendly.com';
+$DOCROOT = $ENV{DOCUMENT_ROOT};
+$DOCUMENTS = ".";
+
+$document = $DOCUMENTS . path_info();
+die "Not an HTML document" unless $document=~/\.html$/;
+open (DOC,$document) or die "Couldn't open $document: $!";
+undef $/;
+$text = <DOC>;  # file slurp
+close DOC;
+
+$text =~ s!<CONFIDENTIAL>.*?</CONFIDENTIAL>!!sig
+        if remote_host() !~ /$TRUSTED$/o;
+print header,$text;

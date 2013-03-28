@@ -1,0 +1,13 @@
+#!/usr/bin/perl
+# File: time2.pl
+use CGI ':standard';
+$current_time = localtime;
+
+print header,
+     start_html('A Virtual Clock');
+print <<END_OF_TEXT;
+<H1>A Virtual Clock</H1>
+The current time is $current_time.
+<HR>
+END_OF_TEXT
+print end_html;

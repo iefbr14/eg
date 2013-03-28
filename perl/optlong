@@ -1,0 +1,11 @@
+#!/usr/bin/perl -w
+
+use Getopt::Long;
+
+my($Debug) = 0;
+my(%Options) = (
+	"debug!" =>	\$Debug,
+);
+&Getopt::Long(\%Options) || usage();
+
+die "Does nothing.\n" if $Debug;

@@ -1,0 +1,39 @@
+#!/usr/bin/perl -Tw
+use strict; #restrict unsafe constructs
+use CGI ':standard';
+use CGI::Carp qw/carpout fatalsToBrowser set_message/;
+use diagnostics -verbose; #print warning diagnostics
+
+BEGIN {
+        local *LOG;
+        my $size = -s "my.log" || 0;
+        open LOG, ">>my.log" or die "Can't open: $!";
+        carpout(\*LOG);
+        my $errors = 0;
+        sub handle_errors #will be called with the text of the error
+        {
+            $errors = defined $_[0] && $_[0] || $errors, $size
+        }
+        set_message(\&handle_errors);
+        }
+
+END {
+      my($errors, $size) = handle_errors;
+      if($errors)
+      {
+        local *LOG;
+        local $/ = undef;
+        open LOG, "my.log" or die "Can't open: $!";
+        seek LOG,$size,0; #skip previous error log
+        local $_ = <LOG>;
+        close LOG;
+        s/&/&amp;/g;      #replace special characters
+        s/"/&quot;/g;
+        s/>/&gt;/g;
+        s/</&lt;/g;
+        print "<table><tr><td bgcolor=linen><pre style='color:black'>";
+        print "<b>$errors</b>\n$_</pre></td></tr></table>";
+      }
+}
+
+print header,start_html('Test page'),'test',end_html;

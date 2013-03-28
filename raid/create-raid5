@@ -1,0 +1,72 @@
+#!/usr/bin/perl -w
+
+=head1 NAME
+
+=head1 USAGE
+
+=head1 REQUIRED ARGUMENTS
+
+=head1 OPTION
+
+=head1 DESCRIPTION
+
+=head1 DIAGNOSTICS
+
+=head1 EXIT STATUS
+
+=head1 CONFIGURATION
+
+=head1 DEPENDENCIES
+
+=head1 INCOMPATIBILITIES
+
+=head1 BUGS AND LIMITATIONS
+
+=head1 AUTHOR
+
+=head1 LICENSE COPYRIGHT
+
+=cut
+
+#
+# $Header: $
+#
+
+use strict;
+use warnings;
+use Getopt::Std;
+
+sub usage {
+	die <<"EOF";
+Usage: $0 [options...] [args]...
+   --
+Options:
+   -x     -- turn Debugging on.
+EOF
+}
+
+my(%Opt);
+getopts('x', \%Opt) || usage;
+
+my($Debug) = $Opt{x} || 0;
+
+
+ID="$1"
+
+mdadm --create /dev/md$ID --level=5 --raid-devices=2 /dev/hdb$ID
+
+foreach my $dev (@ARGV) {
+	if ( -c $dev) {
+		push(@list, $dev);
+		next;
+	}
+	if ( -c "/dev/$dev") {
+		push(@list, $dev);
+		next;
+	}
+	print "No such device $dev\n";
+	$die = 1;
+}
+die if $dia;
+
+# mdadm --create /dev/md22 --level=5 --raid-devices=4 /dev/sda1 /dev/sdb1 /dev/sdc1 /dev/sdd1

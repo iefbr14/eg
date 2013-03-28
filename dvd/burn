@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if [ ! -f "$1" ] ; then
+	echo "No such file: $1"
+	exit 1
+fi
+
+growisofs -dvd-compat -Z /dev/dvd="$1"

@@ -1,0 +1,128 @@
+!default CLIENT	"Site"
+
+H1: Site Docuementation.
+
+H2: ToDo List for [[CLIENT]]
+
+* aliases
+* automount
+* backup
+* cnews
+* config
+* db
+* dns
+* dnssub
+* fixdist
+* fixes.intermezzo
+* group
+* hardware
+* imap
+* index
+* inn
+* intermezzo
+* isppower
+* logfile
+* mail
+* maildir
+* make
+* named
+* named.boot
+* netgroup
+* news
+* nfs
+* nis
+* ntp
+* overview
+* passwd
+* ph
+* pop
+* postfix
+* qmail
+* raid
+* rcs
+* resolv
+* rpm
+* sadmin
+* samba
+* sendmail
+* sendmail.cf
+* services
+* setup
+* smail
+* software
+* ssh
+* syslog
+* test
+* tools
+* uucp
+* virtualdomain
+
+
+H3: Generic
+
+* sdf
+* cvs
+* quotas
+* pop/imap
+* postfix
+* rpm
+* ntp
+* raid
+
+* aliases
+* automount
+* backup
+* cnews
+* config
+* db
+* dns
+* dnssub
+* fixdist
+* fixes.intermezzo
+* gcmds
+* group
+* hardware
+* imap
+* index
+* inn
+* intermezzo
+* isppower
+* logfile
+* mail
+* maildir
+* make
+* named
+* named.boot
+* netgroup
+* news
+* nfs
+* nis
+* ntp
+* overview
+* passwd
+* ph
+* pop
+* postfix
+* qmail
+* raid
+* rcs
+* resolv
+* rpm
+* sadmin
+* samba
+* sendmail
+* sendmail.cf
+* services
+* setup
+* smail
+* software
+* ssh
+* syslog
+* test
+* tools
+* uucp
+* virtualdomain
+
+H3: Site Specific Docuementation
+
+H3: Configure Docuementation.

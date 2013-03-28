@@ -1,0 +1,24 @@
+#!/usr/bin/perl
+use CGI qw/:standard/;
+@advice = (
+	   'A stitch in time saves nine.',
+	   'Look both ways before crossing the street.',
+	   'Chew completely before swallowing.',
+	   'A penny saved is a penny earned.',
+	   'Fools rush in where angels fear to tread.'
+	   );
+print header,
+    start_html("Good Advice"),
+    h1("Good Advice");
+$action = param('action');
+
+if ($action=~/Message (\d+)/) {
+    $message_no = $1-1;
+    print strong($advice[$message_no]);
+} 
+print start_form;
+foreach (1..5) {
+    print submit(-name=>'action',-value=>"Message $_");
+}
+
+print end_form,end_html;

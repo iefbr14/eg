@@ -1,0 +1,12 @@
+#!/usr/bin/perl
+# Script: plaintext4.pl
+
+use CGI ':standard';
+$FILE = './press_release.txt';
+open (FILE,$FILE) || die "Can't open $FILE: $!\n";
+print header('text/plain');
+while (<FILE>) {
+    s/\b(\w)\w{2}(\w)\b/$1**$2/g;
+    print;
+}
+close FILE;

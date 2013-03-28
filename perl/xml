@@ -1,0 +1,36 @@
+#!/usr/bin/perl
+ 
+use XML::Smart;
+ 
+my($Debug) = 1;
+ 
+my($xml) = XML::Smart->new($ARGV[0]);
+ 
+print $base->dump_tree() if $Debug;
+ 
+my($base) = $xml->{transaction}{orderList}{order};
+ 
+my($ref) = {};
+ 
+for $tag (qw(orderId firstName lastName province
+                telephone status offerCode modificationDate)) {
+ 
+        $val = $base->{$tag}('@');
+ 
+        print "$tag: $val\n";
+ 
+        $ref->{$tag} = $val
+}
+
+__DATA__
+<?xml version="1.0" encoding="UTF-8"?>
+<transaction><orderList><order>
+<orderId>148130</orderId>
+<firstName>bill</firstName>
+<lastName>dumbleton</lastName>
+<province>ON</province>
+<telephone>6135427160</telephone>
+<status>Completed</status>
+<offerCode>pcbundle</offerCode>
+<modificationDate>2005-03-23T17:01:26-05:00</modificationDate>
+</order></orderList></transaction>

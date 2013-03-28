@@ -1,0 +1,18 @@
+sub mkfpath {
+        my($path) = @_;
+
+        $path =~ s=^(.*)/.*=$1=;
+        mkpath($path);
+}
+
+sub mkpath {
+        my($path) = @_;
+
+        return if -d $path;
+
+        my($parent) = $path;
+        if ($parent =~ s=^(.*)/.*=$1=) {
+                mkpath($parent);
+        }
+        mkdir($path, 0700);
+}

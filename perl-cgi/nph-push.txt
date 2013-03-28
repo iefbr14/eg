@@ -1,0 +1,19 @@
+#!/usr/local/bin/perl
+#file: nph-push.pl
+
+use CGI::Push qw/:standard/;
+do_push(-next_page=>\&draw_a_page);
+
+sub draw_a_page {
+   my($q,$counter) = @_;
+   return undef if $counter > 100;
+   my $burst = $counter % 10;
+   my $time = localtime();
+   return start_html('testing'),
+          img({-src=>"./pictures/starburst$burst.gif",-align=>RIGHT}),
+          h1('testing'),
+          "This page called $counter times",
+          hr,
+          $time,
+          end_html();
+}

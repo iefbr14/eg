@@ -1,0 +1,21 @@
+#!/usr/bin/perl
+# script: tm.pl
+
+use CGI qw/:standard :html3/;
+
+@PROTECTED = ('Windows NT','Windows 95',
+      'Macintosh','UNIX','VMS',
+      'Microsoft Excel', 'Microsoft Word','Microsoft Office',
+      'Pentium','PowerPC');
+$pattern = join('|',@PROTECTED);
+
+$document = path_translated();
+die "Not an HTML document" unless $document=~/\.html$/;
+open (DOC,$document) or die "Couldn't open $document: $!";
+
+print header;
+while (<DOC>) {
+     s/($pattern)(?!&reg;|<sup>)/$1<sup>&reg;<\/sup>/oig;
+} continue {
+    print $_;
+}

@@ -1,0 +1,13 @@
+#!/usr/bin/perl
+# Script: plaintext3.pl
+use CGI ':standard';
+$header = header('text/plain');
+print <<END_OF_TEXT;
+$header
+Jabberwock
+
+'Twas brillig, and the slithy toves
+Did gyre and gimbol in the wave.
+All mimsy were the borogroves,
+And the mome raths outgrabe....
+END_OF_TEXT

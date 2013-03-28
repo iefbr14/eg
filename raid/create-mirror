@@ -1,0 +1,5 @@
+#!/bin/sh
+
+ID="$1"
+
+mdadm --create /dev/md$ID --level=1 --raid-devices=2 /dev/hdb$ID

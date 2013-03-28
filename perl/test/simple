@@ -1,0 +1,10 @@
+
+use strict;
+use warnings;
+
+use Test::Simple tests => 1;
+
+my($foo, $bar); $foo = $bar = q{foobar};
+
+ok( $foo eq $bar, 'foo is bar' );
+

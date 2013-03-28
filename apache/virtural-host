@@ -1,0 +1,22 @@
+#
+# List all IP Numbers that have virtual host (CNAME) web sites point to them.
+#
+NameVirtualHost 127.0.0.1
+NameVirtualHost 192.168.1.1
+
+#
+# For each virtural host, list its name
+#
+<VirtualHost virtual.host.com>
+    ServerAdmin webmaster@virtual.host.com
+    DocumentRoot /home/vitrual.host.com/html
+    ServerName virtual.host.com
+
+    <Directory "/home/virtual.host.com/html">
+        Options Indexes Includes FollowSymLinks
+        Order allow,deny
+        Allow from all
+    </Directory>
+
+</VirtualHost>
+

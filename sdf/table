@@ -1,0 +1,23 @@
+!block table; style="plain"
+Name	Phone
+Bill	555-1212
+Sue	976-1212
+!endblock
+
+!block table; style="rows"
+Name	Phone
+Bill	555-1212
+Sue	976-1212
+!endblock
+
+!block table; style="columns"
+Name	Phone
+Bill	555-1212
+Sue	976-1212
+!endblock
+
+!block table; style="grid"
+Name	Phone
+Bill	555-1212
+Sue	976-1212
+!endblock
