@@ -23,14 +23,21 @@ Drew Sulivan <drew@ss.org>
 use strict;
 use warnings;
 
-BEGIN {
-	use Exporter   ();
+our $VERSION = 0.00;
 
-	our $VERSION     = 0.00;
-	our @ISA         = qw(Exporter);
-	our @EXPORT      = qw();
-	our %EXPORT_TAGS = ( );
-	our @EXPORT_OK   = qw();
+sub new {
+        my($class) = shift;
+
+        my($self) = {};
+        bless $self, $class;
+
+	$self->_init(@_);
+        return $self;
+}
+        
+sub _init {
+	my($self) = shift;
+
 }
 
 
