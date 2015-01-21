@@ -1,63 +1,40 @@
 #!/usr/bin/ruby
 
-#head1 NAME
+# Example script that does option parsing.
 
-#head1 USAGE
-
-#head1 REQUIRED ARGUMENTS
-
-#head1 OPTION
-
-#head1 DESCRIPTION
-
-#head1 DIAGNOSTICS
-
-#head1 EXIT STATUS
-
-#head1 CONFIGURATION
-
-#head1 DEPENDENCIES
-
-#head1 INCOMPATIBILITIES
-
-#head1 BUGS AND LIMITATIONS
-
-#head1 AUTHOR
-
-#head1 LICENSE COPYRIGHT
-
-#cut
-
-#
-# $Header: $
-#
-
-
-def usage
-	puts <<"EOF";
-Usage: #{$0} [options...] [args]...
-   --
-Options:
-   -x     -- turn Debugging on.
-EOF
-	exit 1
-end
+# Author::    Drew Sullivan  (mailto:drew@ss.org)
+# Copyright:: Copyright (c) 2014 Drew Sullivan
+# License::   GPL
 
 require 'optparse'
 
+#------------------------------------------------------------------------------
+# Globals
+#------------------------------------------------------------------------------
 $debug = false
 
-OptionParser.new do |o|
-  o.banner = "Usage: #{$0} [options]"
-  o.on('-x', '--[no]-debug', 'Debug on' ) { |b| $debug = true }
-  o.on('-f FILENAME', 'process :' ) { |filename| $filename = filename }
-  o.on('-h', 'Help') { usage o }
-  o.on('-?', 'List Options') { puts o; exit }
-  o.parse!
-end
+#------------------------------------------------------------------------------
+def main
+	OptionParser.new do |o|
+	  o.banner = "Usage: #{$0} [options]"
+	  o.on('-?', '--Help', 'Usage help')      { puts o; exit }
+	  o.on('-x', '--[no]-debug', 'Debug on' ) { |b| $debug = true }
+	  o.on('-f FILENAME', 'process :' )       { |filename| $filename = filename }
+	  o.parse!
+	end
 
-p :debug => $debug, :filename => $filename
+	### p :debug => $debug, :filename => $filename
 
-puts "Does nothing.\n" if $debug;
+	puts "Does nothing.\n" if $debug;
 
+	#### p ARGV
+	ARGV.each do |arg|
+		p arg
+	end
+end # main
+
+#------------------------------------------------------------------------------
+# run the main program
+#------------------------------------------------------------------------------
+main
 exit
