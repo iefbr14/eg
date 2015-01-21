@@ -1,0 +1,49 @@
+package Some::Module::oo;
+
+use strict;
+use warnings;
+
+our $VERSION = 0.00;
+
+sub new {
+        my($class) = shift;
+
+        my($self) = {};
+        bless $self, $class;
+
+	$self->_init(@_);
+        return $self;
+}
+
+sub _init {
+	my($self) = shift;
+
+	return $self;
+}
+
+
+END { }       # module clean-up code here (global destructor)
+
+1;  # don't forget to return a true value from the file
+
+__END__
+=head1 NAME
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+=head1 BUGS/CAVEATS/etc
+
+=head1 AUTHOR
+
+Drew Sullivan <drew@ss.org>
+
+=head1 SEE ALSO
+
+=head1 COPYRIGHT and LICENSE
+
+(C) Drew Sullivan 2015 -- LGPL 3.0 or latter
+
+=cut
+
