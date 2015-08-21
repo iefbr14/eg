@@ -1,0 +1,139 @@
+#!/usr/bin/perl
+#
+#
+
+=head1 NAME
+
+eg - used to get examples
+
+=head1 SYNOPIS
+
+eg [options...] [files]...
+
+=head1 DESCRIPTION
+
+Eg looks in F</u/local/eg> for examples files and copies them to
+F<stdout>.
+
+If the F<file> refers to a directory then all items after that
+refer to files in that directory.
+
+If the F<file> refers to a script in bin/F<file> then that scripts
+is run with the rest of the arguements.
+
+If the last arguement is a file or if there are no arguements, then
+eg will display the directory listing. 
+
+=head1 OPTIONS
+
+=item -x Turn debugging on
+
+=item -b : Use : as the base directory.
+
+=head1 AUTHOR
+
+Drew Sullivan <drew@ss.org>
+
+=head1 COPYRIGHT
+
+ (C) Drew Sullivan 2000
+ $Id$
+ $Source$
+
+=cut
+
+my $EGDIR = "/u/local/eg";
+
+sub usage {
+	die <<"EOF";
+Usage: $0 [options...] [files]...
+   -- used to display files in $EGDIR
+Options:
+   -x     -- turn Debugging on.
+   -b :   -- turn Debugging on.
+EOF
+}
+
+use Getopt::Std;
+
+&getopts('x', \%opt) || usage;
+
+my $Debug = $opt{x} || 0;
+   $EGDIR = $opt{b} || $EGDIR;
+
+unless (-d $EGDIR) {
+	die "No example directory: $EGDIR\n";
+}
+
+for (;;) {
+	&show_dir($EGDIR) unless (@ARGV);
+
+	$arg = shift(@ARGV);
+
+	if ( -d "$EGDIR/$arg" ) {
+		$EGDIR .= "/$arg";
+		next;
+	}
+
+	if ( -f "$EGDIR/$arg" ) {
+		cat_file("$EGDIR/$arg");
+
+		last unless @ARGV;
+		next;
+	}
+
+	if ( -f "$EGDIR/bin/$arg" ) {
+		exit system("bin/$arg", @ARGV);
+	}
+	die "Unknown example: $arg\n";
+} 
+
+sub show_dir {
+	&show_dir_internal(@_);
+}
+
+sub show_dir_external {
+	my($dir) = @_;
+	chdir($dir);
+	print "Eg files:\n", "-" x 79, "\n";
+	system("lc", "-H", "-d");
+	exit 0
+}
+
+sub show_dir_internal {
+	my($dir) = @_;
+	my($maxlen) = 0;
+
+	print "Example $dir files:\n", "-" x 79, "\n";
+
+	opendir(DIR, $dir);
+	while ($file=readdir(DIR)) {
+		next if $file =~ /^\./;
+		$maxlen = length($file) if length($file) > $maxlen;
+		push(@list, $file);
+	}
+	closedir(DIR);
+
+	$cols = int(80 / ($maxlen+1));
+	$col = 1;
+	foreach $file (sort @list) {
+		if ($col++ >= $cols) {
+			print $file, "\n";
+			$col = 1;
+		} else {
+			printf "%-${maxlen}s ", $file;
+		}
+	}
+	print "\n" if $col != 1;
+	exit 0
+}
+
+sub cat_file {
+	my($f) = @_;
+
+	open(F, "< $f\0") or die;
+	while (<F>) {
+		print;
+	}
+	close(F);
+}
