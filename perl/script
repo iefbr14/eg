@@ -24,13 +24,16 @@
 
 =head1 AUTHOR
 
-=head1 LICENSE COPYRIGHT
+=head1 LICENSE and COPYRIGHT
+
+(C) Drew Sullivan 2015 -- LGPL 3.0 or latter
+
+=head1 HISTORY
+
+ $Id:$
+ $Source:$
 
 =cut
-
-#
-# $Header: $
-#
 
 use strict;
 use warnings;
@@ -46,7 +49,7 @@ EOF
 }
 
 my(%Opt);
-getopts('x', \%Opt) || usage;
+getopts('x', \%Opt) || usage();
 
 my($Debug) = $Opt{x} || 0;
 
